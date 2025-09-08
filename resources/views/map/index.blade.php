@@ -14,7 +14,7 @@
     <div class="map-container">
         <div class="map-header">
             <h1>Регионы Чеченской Республики</h1>
-            <p>Интерактивная карта, показывающая регионы Чечни с информацией об исчезающих видах флоры и фауны</p>
+            <p>Исследуйте биоразнообразие региона через интерактивную карту</p>
         </div>
         <div id="map"></div>
     </div>
@@ -26,44 +26,42 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация карты с более современными параметрами
+    // Инициализация карты
     const map = L.map('map', {
         minZoom: 7,
         maxZoom: 12,
         zoomControl: true,
         zoomAnimation: true,
+        fadeAnimation: true,
         markerZoomAnimation: true,
         scrollWheelZoom: true,
+        touchZoom: true,
+        boxZoom: true,
+        doubleClickZoom: true,
+        tap: true
     }).setView([43.3, 45.7], 8);
 
-    // Добавление современного стиля тайлов карты
+    // Современные тайлы
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20
     }).addTo(map);
 
-    // Определение регионов и их названий
-    const regions = {
-        @foreach($regions as $code => $name)
-            '{{ $code }}': '{{ $name }}',
-        @endforeach
+    // Цветовая схема
+    const colors = {
+        'region': '#54A0FF',
+        'city': '#9C88FF',
+        'highlight': '#FF6B6B',
+        'republic': '#1DD1A1'
     };
 
-    // Современная цветовая схема
-    const colors = {
-        'region': '#54A0FF',       // Синий для районов
-        'city': '#9C88FF',         // Фиолетовый для городов
-        'highlight': '#FF6B6B',    // Красный для выделения
-        'republic': '#1DD1A1'      // Зеленый для республики в целом
-    };
-    
-    // Функция получения стиля для региона
+    // Стили для регионов
     function getRegionStyle(code, isHighlighted = false) {
         const isCity = (code === 'GROZ' || code === 'ARGN');
         return {
             fillColor: isHighlighted ? colors.highlight : (isCity ? colors.city : colors.region),
-            weight: 2,
+            weight: isHighlighted ? 3 : 2,
             opacity: 1,
             color: 'white',
             dashArray: '',
@@ -71,14 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Словарь для хранения слоев регионов
-    const regionLayers = {};
-
-    // Загрузка общей границы Чечни
+    // Загрузка границы Чечни
     fetch('{{ asset('geojson/chechnya.geojson') }}')
         .then(response => response.json())
         .then(data => {
-            const chechnyaLayer = L.geoJSON(data, {
+            L.geoJSON(data, {
                 style: {
                     fillColor: colors.republic,
                     fillOpacity: 0.2,
@@ -87,71 +82,65 @@ document.addEventListener('DOMContentLoaded', function() {
                     dashArray: '5, 5'
                 }
             }).addTo(map);
-            
-            // После успешной загрузки общей границы, загружаем регионы
             loadAllRegions();
         })
         .catch(error => {
-            console.error('Ошибка при загрузке границы Чечни:', error);
-            // Продолжаем даже при ошибке
+            console.error('Ошибка загрузки границы:', error);
             loadAllRegions();
         });
 
-    // Функция для загрузки всех регионов
+    // Загрузка всех регионов
     function loadAllRegions() {
-        // Создаем групповой слой для регионов
         const regionsGroup = L.layerGroup().addTo(map);
         
-        // Загружаем каждый регион
-        Object.keys(regions).forEach(code => {
-            if (code === 'CHECH') return; // Пропускаем общую границу Чечни
-            loadRegion(code, regions[code], regionsGroup);
-        });
+        @foreach($regions as $code => $name)
+            @if($code !== 'CHECH')
+                loadRegion('{{ $code }}', '{{ $name }}', regionsGroup);
+            @endif
+        @endforeach
         
-        // Добавляем легенду
         addLegend();
     }
     
-    // Загрузка отдельного региона
+    // Загрузка одного региона
     function loadRegion(code, name, layerGroup) {
-        // Преобразуем код в нижний регистр для имени файла
         const filename = code.toLowerCase();
         const regionUrl = `{{ asset('geojson') }}/${filename}.geojson`;
         
         fetch(regionUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 const regionLayer = L.geoJSON(data, {
                     style: getRegionStyle(code),
                     onEachFeature: function(feature, layer) {
-                        // Создаем улучшенное всплывающее окно
                         const popupContent = `
                             <div class="region-popup">
                                 <div class="region-name">${name}</div>
                                 <div class="region-info">
-                                    <p>Выберите категорию исчезающих видов этого региона:</p>
+                                    Исследуйте исчезающие виды этого региона
                                 </div>
                                 <div class="popup-links">
-                                    <a href="{{ url('/cards') }}?kind=animal&region=${code}" class="region-link">Животные</a>
-                                    <a href="{{ url('/cards') }}?kind=plants&region=${code}" class="region-link">Растения</a>
-                                    <a href="{{ url('/cards') }}?kind=bug&region=${code}" class="region-link">Насекомые</a>
-                                    <a href="{{ url('/cards') }}?kind=fungus&region=${code}" class="region-link">Грибы</a>
+                                    <a href="{{ url('/cards') }}?kind=animal&region=${code}" class="region-link">
+                                        <i class="fas fa-paw"></i> Животные
+                                    </a>
+                                    <a href="{{ url('/cards') }}?kind=plants&region=${code}" class="region-link">
+                                        <i class="fas fa-leaf"></i> Растения
+                                    </a>
+                                    <a href="{{ url('/cards') }}?kind=bug&region=${code}" class="region-link">
+                                        <i class="fas fa-bug"></i> Насекомые
+                                    </a>
+                                    <a href="{{ url('/cards') }}?kind=fungus&region=${code}" class="region-link">
+                                        <i class="fas fa-mushroom"></i> Грибы
+                                    </a>
                                 </div>
                             </div>
                         `;
                         
-                        // Настройка всплывающего окна
                         layer.bindPopup(popupContent, {
                             maxWidth: 300,
                             className: 'region-popup-container'
                         });
                         
-                        // События взаимодействия
                         layer.on({
                             mouseover: function() {
                                 this.setStyle(getRegionStyle(code, true));
@@ -171,14 +160,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }).addTo(layerGroup);
                 
-                // Сохраняем слой региона для доступа к нему позже
-                regionLayers[code] = regionLayer;
-                
-                // Получаем центр региона для метки
+                // Добавление метки
                 const bounds = regionLayer.getBounds();
                 const center = bounds.getCenter();
                 
-                // Добавляем метку с названием региона
                 L.marker(center, {
                     icon: L.divIcon({
                         className: 'region-label',
@@ -188,17 +173,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                 }).addTo(layerGroup);
             })
-            .catch(error => {
-                console.error(`Ошибка при загрузке региона ${code}:`, error);
-            });
+            .catch(error => console.error(`Ошибка загрузки региона ${code}:`, error));
     }
     
-    // Добавление современной легенды
+    // Добавление легенды
     function addLegend() {
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = function(map) {
             const div = L.DomUtil.create('div', 'map-legend');
-            
             div.innerHTML = `
                 <h4>Типы территорий</h4>
                 <div class="legend-item">
@@ -214,7 +196,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span>Республика</span>
                 </div>
             `;
-            
             return div;
         };
         legend.addTo(map);
