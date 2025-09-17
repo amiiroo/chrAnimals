@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Карта регионов Чечни')
+@section('title', 'Карта районов Чечни')
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/map.css') }}">
@@ -13,7 +13,7 @@
 <div class="container">
     <div class="map-container">
         <div class="map-header">
-            <h1>Регионы Чеченской Республики</h1>
+            <h1>Районы Чеченской Республики</h1>
             <p>Исследуйте биоразнообразие региона через интерактивную карту</p>
         </div>
         <div id="map"></div>
@@ -117,20 +117,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="region-popup">
                                 <div class="region-name">${name}</div>
                                 <div class="region-info">
-                                    Исследуйте исчезающие виды этого региона
+                                    Исследуйте разнообразие видов растительности этого района ЧР
                                 </div>
                                 <div class="popup-links">
-                                    <a href="{{ url('/cards') }}?kind=animal&region=${code}" class="region-link">
-                                        <i class="fas fa-paw"></i> Животные
-                                    </a>
+                                    
                                     <a href="{{ url('/cards') }}?kind=plants&region=${code}" class="region-link">
-                                        <i class="fas fa-leaf"></i> Растения
-                                    </a>
-                                    <a href="{{ url('/cards') }}?kind=bug&region=${code}" class="region-link">
-                                        <i class="fas fa-bug"></i> Насекомые
-                                    </a>
-                                    <a href="{{ url('/cards') }}?kind=fungus&region=${code}" class="region-link">
-                                        <i class="fas fa-mushroom"></i> Грибы
+                                        <i class="fas fa-leaf"></i> Иследовать
                                     </a>
                                 </div>
                             </div>
@@ -173,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                 }).addTo(layerGroup);
             })
-            .catch(error => console.error(`Ошибка загрузки региона ${code}:`, error));
+            .catch(error => console.error(`Ошибка загрузки района ${code}:`, error));
     }
     
     // Добавление легенды

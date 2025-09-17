@@ -43,10 +43,7 @@
                     <div class="form-group">
                         <label for="kind">Тип</label>
                         <select id="kind" name="kind" required>
-                            <option value="animal" {{ old('kind') == 'animal' ? 'selected' : '' }}>Животное</option>
-                            <option value="plants" {{ old('kind') == 'plants' ? 'selected' : '' }}>Растение</option>
-                            <option value="bug" {{ old('kind') == 'bug' ? 'selected' : '' }}>Насекомое</option>
-                            <option value="fungus" {{ old('kind') == 'fungus' ? 'selected' : '' }}>Гриб</option>
+                            <option value="plants" selected>Растение</option>
                         </select>
                         @error('kind')
                             <div class="text-danger">{{ $message }}</div>
@@ -116,7 +113,13 @@
                 <label for="threats">Основные угрозы</label>
                 <textarea id="threats" name="threats" rows="3">{{ old('threats') }}</textarea>
             </div>
-            
+            <div class="form-group">
+                <label for="dop_info">Дополнительная информация</label>
+                <textarea id="dop_info" name="dop_info" rows="3">{{ old('dop_info') }}</textarea>
+                @error('dop_info')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
             <div class="form-group">
                 <label for="conservation">Меры по сохранению</label>
                 <textarea id="conservation" name="conservation" rows="3">{{ old('conservation') }}</textarea>

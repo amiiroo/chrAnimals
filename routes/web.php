@@ -17,6 +17,7 @@ Route::get('/cards/{card}', [CardController::class, 'show'])->name('cards.show')
 // Карта регионов
 Route::get('/map', [MapController::class, 'index'])->name('map');
 
+
 // Админ-панель (с middleware auth)
 Route::prefix('admin')->middleware(['auth'])->group(function() {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');

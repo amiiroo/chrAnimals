@@ -8,6 +8,25 @@ use Illuminate\View\View;
 
 class CardController extends Controller
 {
+    private $regions = [
+        'GRZR' => 'Грозненский район',
+        'URUS' => 'Урус-Мартановский район',
+        'VEDN' => 'Веденский район',
+        'ITUM' => 'Итум-Калинский район',
+        'SHAL' => 'Шалинский район',
+        'SHAT' => 'Шатойский район',
+        'SHAR' => 'Шаройский район',
+        'KURC' => 'Курчалоевский район',
+        'SHEL' => 'Шелковской район',
+        'SERN' => 'Серноводский район',
+        'ACHM' => 'Ачхой-Мартановский район',
+        'NTRK' => 'Надтеречный район',
+        'NAUR' => 'Наурский район',
+        'GUMS' => 'Гудермесский район',
+        'NOJU' => 'Ножай-Юртовский район',
+        'GROZ' => 'г. Грозный',
+        'ARGN' => 'г. Аргун'
+    ];
     public function index(Request $request): View
     {
         $kind = $request->kind;
@@ -22,7 +41,9 @@ class CardController extends Controller
                     
         $kindTitle = $this->getKindTitle($kind);
         
-        return view('cards.index', compact('cards', 'kindTitle', 'kind', 'region'));
+        $regionName = $region ? ($this->regions[$region] ?? 'Чеченская Республика') : 'Чеченская Республика';
+        
+        return view('cards.index', compact('cards', 'kindTitle', 'kind', 'region', 'regionName'));
     }
     
     public function show(Card $card): View
@@ -33,10 +54,7 @@ class CardController extends Controller
     private function getKindTitle(string $kind): string
     {
         $titles = [
-            'animal' => 'животных',
-            'plants' => 'растений',
-            'bug' => 'насекомых',
-            'fungus' => 'грибов'
+            'plant' => 'растений',
         ];
         
         return $titles[$kind] ?? '';

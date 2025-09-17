@@ -27,14 +27,7 @@
         </div>
         
         <div class="filter-controls">
-            <select name="kind" onchange="window.location.href='{{ route('admin.index') }}?kind='+this.value">
-                <option value="">Все типы</option>
-                <option value="animal" {{ request('kind') == 'animal' ? 'selected' : '' }}>Животные</option>
-                <option value="plants" {{ request('kind') == 'plants' ? 'selected' : '' }}>Растения</option>
-                <option value="bug" {{ request('kind') == 'bug' ? 'selected' : '' }}>Насекомые</option>
-                <option value="fungus" {{ request('kind') == 'fungus' ? 'selected' : '' }}>Грибы</option>
-            </select>
-            
+           
             <select name="region" onchange="window.location.href='{{ route('admin.index') }}?region='+this.value">
                 <option value="">Все регионы</option>
                 <option value="GRZR" {{ request('region') == 'GRZR' ? 'selected' : '' }}>Грозненский район</option>
@@ -85,17 +78,8 @@
                 <td>{{ $card->title }}</td>
                 <td>
                     @switch($card->kind)
-                        @case('animal')
-                            Животное
-                            @break
                         @case('plants')
                             Растение
-                            @break
-                        @case('bug')
-                            Насекомое
-                            @break
-                        @case('fungus')
-                            Гриб
                             @break
                         @default
                             {{ $card->kind }}

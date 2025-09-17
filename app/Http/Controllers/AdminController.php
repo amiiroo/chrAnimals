@@ -19,10 +19,7 @@ class AdminController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
         
-        // Фильтр по типу
-        if ($request->has('kind') && $request->kind) {
-            $query->where('kind', $request->kind);
-        }
+        
         
         // Фильтр по региону
         if ($request->has('region') && $request->region) {
@@ -44,7 +41,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'kind' => 'required|string|in:animal,plants,bug,fungus',
+            'kind' => 'required|string|in:plants',
             'region' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'status' => 'nullable|string',
@@ -52,12 +49,14 @@ class AdminController extends Controller
             'habitat' => 'nullable|string',
             'threats' => 'nullable|string',
             'conservation' => 'nullable|string',
+            'dop_info' => 'nullable|string', 
         ]);
         
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('cards', 'public');
             $validated['image'] = $imagePath;
         }
+        $validated['dop_info'] = $request->dop_info ?? '';
         
         Card::create($validated);
         
@@ -74,7 +73,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'kind' => 'required|string|in:animal,plants,bug,fungus',
+            'kind' => 'required|string|in:plants',
             'region' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'status' => 'nullable|string',
@@ -82,6 +81,7 @@ class AdminController extends Controller
             'habitat' => 'nullable|string',
             'threats' => 'nullable|string',
             'conservation' => 'nullable|string',
+            'dop_info' => 'nullable|string', 
         ]);
         
         if ($request->hasFile('image')) {
@@ -93,6 +93,7 @@ class AdminController extends Controller
             $imagePath = $request->file('image')->store('cards', 'public');
             $validated['image'] = $imagePath;
         }
+        $validated['dop_info'] = $request->dop_info ?? '';
         
         $card->update($validated);
         

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Исчезающие виды Чеченской Республики')</title>
+    <title>@yield('title', 'Флора Чеченской Республики')</title>
     <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,10 +16,10 @@
 <body>
     <nav class="main-nav">
         <div class="container">
-            <a href="{{ route('home') }}" class="nav-logo">Флора и фауна Чечни</a>
+            <a href="{{ route('home') }}" class="nav-logo">Флора Чечни</a>
             <div class="nav-links">
                 <a href="{{ route('home') }}">Главная</a>
-                <a href="{{ route('map') }}">Карта регионов</a>
+                <a href="{{ route('map') }}">Карта районов</a>
                 @auth
                     <a href="{{ route('admin.index') }}">Админ-панель</a>
                     <form action="{{ route('logout') }}" method="POST" class="logout-form">
@@ -39,7 +39,7 @@
 
     <footer class="main-footer">
         <div class="container">
-            <p>© {{ date('Y') }} Исчезающие виды Чеченской Республики</p>
+            <p>© {{ date('Y') }} Флора Чеченской Республики</p>
         </div>
     </footer>
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', "Исчезающие виды {$kindTitle}")
+@section('title', "Виды {$kindTitle}")
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/cards.css') }}">
@@ -9,7 +9,7 @@
 @section('content')
 <div class="container">
     <div class="page-header">
-        <h1>Исчезающие виды {{ $kindTitle }}</h1>
+        <h1>Виды растительности в - {{ $regionName }}</h1>
         @auth
         <a href="{{ route('admin.index') }}" class="admin-btn">Админ</a>
         @endauth
